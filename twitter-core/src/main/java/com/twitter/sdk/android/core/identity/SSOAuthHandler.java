@@ -18,6 +18,7 @@
 package com.twitter.sdk.android.core.identity;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -100,6 +101,10 @@ class SSOAuthHandler extends AuthHandler {
         return startAuthActivityForResult(activity);
     }
 
+    @Override
+    public boolean authorize(Fragment fragment, Activity activity) {
+        return startAuthFragmentForResult(fragment, activity);
+    }
 
     private boolean startAuthActivityForResult(Activity activity) {
         final PackageManager pm = activity.getPackageManager();
@@ -121,6 +126,33 @@ class SSOAuthHandler extends AuthHandler {
 
         try {
             activity.startActivityForResult(intent, requestCode);
+            return true;
+        } catch (Exception e) {
+            Twitter.getLogger().e(TwitterCore.TAG, "SSO exception occurred", e);
+            return false;
+        }
+    }
+
+    private boolean startAuthFragmentForResult(Fragment fragment, Activity activity) {
+        final PackageManager pm = activity.getPackageManager();
+        final String packageName = availableSSOPackage(pm);
+        if (packageName == null) {
+            Twitter.getLogger().e(TwitterCore.TAG, "SSO app signature check failed", null);
+            return false;
+        }
+
+        final ComponentName ssoActivity = new ComponentName(packageName, SSO_CLASS_NAME);
+        final TwitterAuthConfig authConfig = getAuthConfig();
+        final Intent intent = new Intent().setComponent(ssoActivity);
+        if (!IntentUtils.isActivityAvailable(activity, intent)) {
+            Twitter.getLogger().e(TwitterCore.TAG, "SSO auth activity not found", null);
+            return false;
+        }
+        intent.putExtra(EXTRA_CONSUMER_KEY, authConfig.getConsumerKey())
+            .putExtra(EXTRA_CONSUMER_SECRET, authConfig.getConsumerSecret());
+
+        try {
+            fragment.startActivityForResult(intent, requestCode);
             return true;
         } catch (Exception e) {
             Twitter.getLogger().e(TwitterCore.TAG, "SSO exception occurred", e);
