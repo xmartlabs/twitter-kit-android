@@ -18,6 +18,7 @@
 package com.twitter.sdk.android.core.identity;
 
 import android.app.Activity;
+import android.app.Fragment;
 
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -90,6 +91,12 @@ public class AuthStateTest  {
                         // We use this opportunity to set authState's authHandlerRef so that we
                         // can verify behavior when compare and set fails. This is done because
                         // AtomicReference has methods that cannot be mocked.
+                        authState.authHandlerRef.set(mock(AuthHandler.class));
+                        return true;
+                    }
+
+                    @Override
+                    public boolean authorize(Fragment fragment, Activity activity) {
                         authState.authHandlerRef.set(mock(AuthHandler.class));
                         return true;
                     }

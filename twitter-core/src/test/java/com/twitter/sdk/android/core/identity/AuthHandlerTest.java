@@ -18,6 +18,7 @@
 package com.twitter.sdk.android.core.identity;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 
 import com.twitter.sdk.android.core.Callback;
@@ -168,6 +169,11 @@ public class AuthHandlerTest  {
         return new AuthHandler(AUTH_CONFIG, callback, TEST_REQUEST_CODE) {
             @Override
             public boolean authorize(Activity activity) {
+                return true;
+            }
+
+            @Override
+            public boolean authorize(Fragment fragment, Activity activity) {
                 return true;
             }
         };

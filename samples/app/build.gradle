@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath dependency.spoonGradlePlugin
+        classpath dependency.androidGradlePlugin
     }
 }
 
@@ -9,7 +10,7 @@ Properties props = new Properties()
 try {
     props.load(file('twitter.properties').newDataInputStream())
 } catch (Exception ex) {
-    throw new GradleException("Missing twitter.properties, check the twitter.properties.sample file.")
+    logger.warn("Missing twitter.properties, check the twitter.properties.sample file.")
 }
 
 apply plugin: 'com.android.application'
@@ -17,7 +18,6 @@ apply plugin: 'spoon'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
         applicationId "com.example.app.twitter"
@@ -74,10 +74,13 @@ dependencies {
     implementation dependency.design
     implementation dependency.okHttpInterceptor
 
-    debugCompile dependency.leakCanary
-    releaseCompile dependency.leakCanaryNoOp
+    debugImplementation dependency.leakCanary
+    releaseImplementation dependency.leakCanaryNoOp
 
-    androidTestCompile dependency.spoon
-    androidTestCompile dependency.espresso
-    androidTestCompile dependency.androidTestingSupport
+    androidTestImplementation dependency.spoon
+    androidTestImplementation dependency.espresso
+    androidTestImplementation dependency.androidTestingSupport
+    implementation project(path: ':twitter-core')
+    implementation project(path: ':tweet-composer')
+    implementation project(path: ':tweet-ui')
 }

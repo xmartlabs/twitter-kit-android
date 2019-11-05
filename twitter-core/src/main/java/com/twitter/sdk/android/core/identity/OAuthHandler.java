@@ -18,6 +18,7 @@
 package com.twitter.sdk.android.core.identity;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 
 import com.twitter.sdk.android.core.Callback;
@@ -34,13 +35,19 @@ class OAuthHandler extends AuthHandler {
      * @param callback   The listener to callback when authorization completes.
      */
     OAuthHandler(TwitterAuthConfig authConfig, Callback<TwitterSession> callback,
-            int requestCode) {
+                 int requestCode) {
         super(authConfig, callback, requestCode);
     }
 
     @Override
     public boolean authorize(Activity activity) {
         activity.startActivityForResult(newIntent(activity), requestCode);
+        return true;
+    }
+
+    @Override
+    public boolean authorize(Fragment fragment, Activity activity) {
+        fragment.startActivityForResult(newIntent(activity), requestCode);
         return true;
     }
 
