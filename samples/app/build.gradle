@@ -58,7 +58,7 @@ android {
     }
 
     lintOptions {
-        warningsAsErrors true
+        warningsAsErrors false
     }
 
     compileOptions {
